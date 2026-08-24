@@ -29,3 +29,7 @@ sistema-tutorias/
 │                       └── notification/ # Canal de notificaciones
 └── pom.xml
 ```
+
+## Nota de Entorno de Desarrollo
+
+_Profesor como aclaración de mi actividad, el desarrollo y subida inicial del proyecto se realizaron desde una computadora prestada debido a mantenimiento de mi equipo personal. Las contribuciones registradas bajo el usuario Jonnathan1288 corresponden a la configuración previa del entorno en dicho equipo._
