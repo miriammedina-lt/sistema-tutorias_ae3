@@ -1,0 +1,108 @@
+@startuml
+left to right direction
+skinparam classAttributeIconSize 0
+
+class ServicioReservas {
+    -repositorio: RepositorioReservas
+    -notificador: Notificador
+    +crearReserva(): void
+}
+
+interface RepositorioReservas {
+    +guardar(reserva: Reserva): void
+    +buscarPorId(id: String): Reserva
+}
+
+interface Notificador {
+    +enviarMensaje(destinatario: Usuario, mensaje: String): void
+}
+
+class Notificacion {
+    -id: String
+    -destinatario: Usuario
+    -asunto: String
+    -cuerpoMensaje: String
+    -fechaEnvio: LocalDateTime
+    -canal: String
+}
+
+abstract class Usuario {
+    -id: String
+    -nombre: String
+    -email: String
+    -cedula: String
+    +validarEmail(): boolean
+    +autenticar(): boolean
+}
+
+class Estudiante {
+    -carrera: String
+    -semestre: int
+    -matricula: String
+    +solicitarTutoria(): void
+    +cancelarReserva(): void
+}
+
+class Docente {
+    -facultad: String
+    -especialidad: String
+    +publicarHorario(): void
+    +registrarAsistencia(): void
+}
+
+class Materia {
+    -codigo: String
+    -nombre: String
+    -creditos: int
+    +esImpartidaPor(): boolean
+}
+
+class HorarioTutoria {
+    -id: String
+    -fecha: LocalDate
+    -horaInicio: LocalTime
+    -horaFin: LocalTime
+    -cupoLibre: int
+    +reservarCupo(): boolean
+    +liberarCupo(): void
+    +estaDisponible(): boolean
+}
+
+class Reserva {
+    -id: String
+    -fechaSolicitud: LocalDateTime
+    -estado: String
+    -motivo: String
+    +confirmar(): void
+    +cancelar(): void
+    +reprogramar(): void
+}
+
+class ComprobanteAsistencia {
+    -id: String
+    -fechaRealizacion: LocalDateTime
+    -observaciones: String
+    -asistio: boolean
+    +completarRegistro(): void
+}
+
+' Relaciones organizadas a lo ancho
+Usuario <|-- Estudiante
+Usuario <|-- Docente
+
+Docente "1" -right-> "*" Materia : dicta >
+Docente "1" -down-> "1" HorarioTutoria : publica >
+Materia "1" <-left- "1" HorarioTutoria : pertenece_a <
+HorarioTutoria "1" <-right- "0..1" Reserva : asignado_a <
+Estudiante "1" -down-> "*" Reserva : realiza >
+Reserva "1" -right-> "0..1" ComprobanteAsistencia : genera >
+
+Notificacion "1" -up-> "1" Usuario : enviado_a >
+
+ServicioReservas o-left- RepositorioReservas
+ServicioReservas o-right- Notificador
+ServicioReservas ..> Notificacion : genera
+ServicioReservas ..> Usuario : valida
+ServicioReservas ..> HorarioTutoria : verifica
+ServicioReservas ..> Reserva : maneja
+@enduml
