@@ -1,60 +1,81 @@
 # Sistema de Gestión de Tutorías Académicas (UEES)
 
-Este proyecto implementa el diseño orientado a objetos para la gestión automatizada de tutorías académicas, permitiendo la interacción entre estudiantes, docentes y el módulo de reservas.
+Este proyecto integra y consolida la arquitectura orientada a objetos para el sistema de gestión de tutorías (Ae1, Ae2 y Ae3). Demuestra el uso de buenas prácticas de modelado, diseño limpio y la implementación de cuatro patrones de diseño fundamentales: **Abstract Factory**, **Builder**, **Observer** y **Strategy**.
 
 ---
 
 ## Decisiones Principales de Diseño
 
-Para garantizar un código mantenible, extensible y alineado a los principios de la Programación Orientada a Objetos (POO), se tomaron las siguientes decisiones de modelado basadas en la estructura del proyecto:
+### 1. Modelo de Dominio Base (Ae1)
 
-### 1. Descomposición y Responsabilidades por Clase
+- **`Usuario` (Clase Base):** Encapsula atributos comunes (`id`, `nombre`, `email`, `cedula`) mediante herencia para `Estudiante` y `Docente`.
+- **`Estudiante` / `Docente`:** Especializan a `Usuario` para representar a los actores clave de las tutorías.
+- **`Materia` & `HorarioTutoria`:** Definen la asignatura académica, las ventanas de atención y la gestión de cupos libres.
+- **`Reserva`:** Entidad central del sistema que coordina la relación entre estudiante, docente, materia y horario.
+- **`ComprobanteAsistencia`:** Genera la evidencia documental tras realizar la sesión.
 
-- **Paquete `domain` (Entidades del Sistema):**
-    - **`Usuario` (Clase Base):** Contiene los atributos comunes (`id`, `nombre`, `email`) compartidos por `Estudiante` y `Docente`. Se creó para aplicar **herencia** y evitar duplicación de código.
-    - **`Estudiante` / `Docente`:** Especializan a `Usuario`. `Docente` gestiona sus horarios de atención, mientras que `Estudiante` solicita las sesiones.
-    - **`Materia`:** Representa la asignatura académica sobre la cual se dictan las tutorías.
-    - **`HorarioTutoria`:** Encapsula la disponibilidad de tiempo ofrecida por el docente.
-    - **`Reserva`:** Modela el vínculo de asociación entre un `Estudiante` y un `HorarioTutoria`. Mantiene el estado de la cita.
-    - **`ComprobanteAsistencia`:** Genera la evidencia documental que confirma que la tutoría fue realizada con éxito.
+### 2. Patrones de Diseño Implementados (Ae2 + Ae3)
 
-- **Paquete `service` (Lógica de Negocio y Persistencia):**
-    - **`ServicioReservas`:** Aplica el **Principio de Responsabilidad Única (SRP)**. Separa la lógica de agendamiento y validación de disponibilidad para no recargar las clases de entidad (`Reserva` o `Estudiante`).
-    - **`RepositorioReservas`:** Encapsula el acceso y almacenamiento de las reservas, aislando la lógica de datos del resto de la aplicación.
-
-- **Paquete `notification` (Módulo de Mensajería):**
-    - **`Notification`:** Define el objeto o estructura del mensaje que se enviará a los usuarios.
-    - **`Notificador`:** Se encarga exclusivamente del envío de confirmaciones y alertas a estudiantes y docentes, desligando la mensajería del flujo central de reservas.
+| Patrón             | Paquete             | Propósito y Solución                                                                                                                                                                           |
+| :----------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Builder**        | `patrones.builder`  | Permite la construcción paso a paso de objetos `Reserva` mediante Fluent API, separando parámetros requeridos de opcionales (modalidad, grabación, prioridad, etc.).                           |
+| **Factory Method** | `patrones.factory`  | Desacopla la creación de notificadores (Email, SMS, Teams, WhatsApp) eliminando la necesidad de estructuras condicionales `if-else` o `switch`.                                                |
+| **Observer**       | `patrones.observer` | Notifica automáticamente a los observadores registrados (`EmailReservaObserver`, `LogReservaObserver`) ante cambios de estado en la `Reserva` (`CONFIRMADA`, `CANCELADA`).                     |
+| **Strategy**       | `patrones.strategy` | Evalúa dinámicamente las políticas de cancelación de tutorías (`CancelacionEstandarStrategy` vs `CancelacionPrioritariaStrategy`), independizando las reglas de negocio del dominio principal. |
 
 ---
 
-## Tecnologías Utilizadas
-
-- **Lenguaje:** Java 17
-- **Gestor de Dependencias:** Apache Maven
-- **Modelado UML:** PlantUML
-
----
-
-## Estructura del Proyecto
+## Estructura del Repositorio
 
 ```text
 sistema-tutorias/
 ├── docs/
-│   ├── modelo-clases.puml        # Código fuente de PlantUML
-│   └── modelo-clases.png         # Diagrama de clases exportado
+│   ├── builder.puml
+│   ├── factory-method.png
+│   ├── factory-method.puml
+│   ├── modelo-clases.png
+│   └── modelo-clases.puml
 ├── src/
 │   └── main/
 │       └── java/
-│           └── edu/
-│               └── uees/
-│                   └── tutorias/
-│                       ├── Main.java
-│                       ├── domain/        # Clases de entidad (Usuario, Reserva, Materia, etc.)
-│                       ├── notification/  # Gestión de notificaciones (Notificador, Notification)
-│                       └── service/       # Lógica de negocio (ServicioReservas, RepositorioReservas)
+│           └── edu/uees/tutorias/
+│               ├── Main.java
+│               ├── domain/
+│               │   ├── ComprobanteAsistencia.java
+│               │   ├── Docente.java
+│               │   ├── Estudiante.java
+│               │   ├── HorarioTutoria.java
+│               │   ├── Materia.java
+│               │   ├── Reserva.java
+│               │   └── Usuario.java
+│               ├── notification/
+│               │   ├── Notificacion.java
+│               │   └── Notificador.java
+│               ├── patrones/
+│               │   ├── builder/
+│               │   │   └── ReservaBuilder.java
+│               │   ├── factory/
+│               │   │   ├── EmailNotificadorFactory.java
+│               │   │   ├── Notificacion.java
+│               │   │   ├── NotificacionEmail.java
+│               │   │   ├── NotificacionSMS.java
+│               │   │   ├── NotificacionTeams.java
+│               │   │   ├── NotificacionWhatsApp.java
+│               │   │   ├── NotificadorFactory.java
+│               │   │   ├── SMSNotificadorFactory.java
+│               │   │   ├── TeamsNotificadorFactory.java
+│               │   │   └── WhatsAppNotificadorFactory.java
+│               │   ├── observer/
+│               │   │   ├── EmailReservaObserver.java
+│               │   │   ├── LogReservaObserver.java
+│               │   │   └── ReservaObserver.java
+│               │   └── strategy/
+│               │       ├── CancelacionEstandarStrategy.java
+│               │       ├── CancelacionPrioritariaStrategy.java
+│               │       └── EstrategiaCancelacion.java
+│               └── service/
+│                   ├── RepositorioReservas.java
+│                   └── ServicioReservas.java
 └── pom.xml
 
-## Nota de Entorno de Desarrollo
-* Profesor, el desarrollo y subida inicial del proyecto se realizaron en una computadora que me prestaron debido a mantenimiento de mi equipo personal. Las contribuciones registradas bajo el usuario Jonnathan1288 corresponden a la configuración previa del entorno en dicho equipo.*
 ```
