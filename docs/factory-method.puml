@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "edu.uees.patrones.factory" {
+
+    interface Notificacion {
+        +enviar(destino: String, mensaje: String): void
+    }
+
+    class NotificacionEmail implements Notificacion {
+        +enviar(destino: String, mensaje: String): void
+    }
+
+    class NotificacionSMS implements Notificacion {
+        +enviar(destino: String, mensaje: String): void
+    }
+
+    class NotificacionTeams implements Notificacion {
+        +enviar(destino: String, mensaje: String): void
+    }
+
+    class NotificacionWhatsApp implements Notificacion {
+        +enviar(destino: String, mensaje: String): void
+    }
+
+    abstract class NotificadorFactory {
+        +{abstract} crearNotificacion(): Notificacion
+        +notificarUsuario(destino: String, mensaje: String): void
+    }
+
+    class EmailNotificadorFactory extends NotificadorFactory {
+        +crearNotificacion(): Notificacion
+    }
+
+    class SMSNotificadorFactory extends NotificadorFactory {
+        +crearNotificacion(): Notificacion
+    }
+
+    class TeamsNotificadorFactory extends NotificadorFactory {
+        +crearNotificacion(): Notificacion
+    }
+
+    class WhatsAppNotificadorFactory extends NotificadorFactory {
+        +crearNotificacion(): Notificacion
+    }
+
+    NotificadorFactory .> Notificacion : crea >
+}
+@enduml

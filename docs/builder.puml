@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "edu.uees.patrones.builder" {
+
+    class Reserva {
+        -estudiante: String
+        -docente: String
+        -materia: String
+        -horario: String
+        -modalidad: String
+        -duracionMinutos: int
+        -requiereGrabacion: boolean
+        -prioridad: String
+        -observaciones: String
+        ~Reserva(builder: ReservaBuilder)
+        +toString(): String
+    }
+
+    class ReservaBuilder {
+        #estudiante: String
+        #docente: String
+        #materia: String
+        #horario: String
+        #modalidad: String = "Presencial"
+        #duracionMinutos: int = 60
+        #requiereGrabacion: boolean = false
+        #prioridad: String = "Normal"
+        #observaciones: String = "Sin observaciones"
+        +ReservaBuilder(estudiante: String, docente: String, materia: String, horario: String)
+        +modalidad(m: String): ReservaBuilder
+        +duracionMinutos(min: int): ReservaBuilder
+        +requiereGrabacion(req: boolean): ReservaBuilder
+        +prioridad(p: String): ReservaBuilder
+        +observaciones(obs: String): ReservaBuilder
+        +build(): Reserva
+    }
+
+    ReservaBuilder ..> Reserva : construye >
+}
+@enduml
