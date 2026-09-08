@@ -1,10 +1,46 @@
 # Sistema de Gestión de Tutorías Académicas (UEES)
 
-Este proyecto integra y consolida la arquitectura orientada a objetos para el sistema de gestión de tutorías (Ae1, Ae2 y Ae3). Demuestra el uso de buenas prácticas de modelado, diseño limpio y la implementación de cuatro patrones de diseño fundamentales: **Abstract Factory**, **Builder**, **Observer** y **Strategy**.
+## 1. Propósito del Proyecto
+
+El propósito del sistema es automatizar y gestionar eficientemente el agendamiento, seguimiento y cancelación de tutorías académicas, integrando a estudiantes, docentes y distintos canales de comunicación de forma desacoplada y mantenible.
 
 ---
 
-## Tecnologías Utilizadas
+## 2. Problema y Alcance del Incremento
+
+- **Problema:** Los sistemas tradicionales de tutorías presentan alto acoplamiento al gestionar múltiples canales de notificación, construcciones complejas de reservas con parámetros opcionales y reglas de cancelación rígidas.
+- **Alcance:** Implementar un incremento modular que consolida el modelo de dominio base (Ae1), la creación dinámica de canales de notificación y construcción fluida de reservas (Ae2), e incorpora el manejo de eventos por cambio de estado y políticas dinámicas de cancelación (Ae3).
+
+---
+
+## 3. Clases / Componentes Principales
+
+- **`Usuario` (Clase Base):** Encapsula atributos comunes (`id`, `nombre`, `email`, `cedula`).
+- **`Estudiante` / `Docente`:** Subclases que representan a los actores del sistema.
+- **`Reserva`:** Objeto central de dominio que coordina la cita y su estado (`PENDIENTE`, `CONFIRMADA`, `CANCELADA`).
+- **`HorarioTutoria` & `Materia`:** Representan la disponibilidad del docente y la asignatura.
+- **`ComprobanteAsistencia`:** Genera el registro físico/digital post-tutoría.
+
+---
+
+## 4. Patrones Utilizados y Justificación
+
+- **Abstract Factory (`patrones.factory`):** Permite instanciar notificaciones por Email, SMS, Teams y WhatsApp sin acoplar el código a clases concretas ni usar estructuras `if/else`.
+- **Builder (`patrones.builder`):** Facilita la creación paso a paso de objetos `Reserva` complejos mediante Fluent API, gestionando campos obligatorios y opcionales sin sobrecargar constructores.
+- **Observer (`patrones.observer`):** Desacopla la lógica de eventos; al confirmar o cancelar una reserva, se notifica automáticamente a observadores como `EmailReservaObserver` y `LogReservaObserver`.
+- **Strategy (`patrones.strategy`):** Encapsula la lógica de validación para cancelaciones (`Estandar` vs `Prioritaria`), permitiendo cambiar las reglas de negocio dinámicamente sin modificar la entidad `Reserva`.
+
+---
+
+## 5. Principios SOLID Relevantes
+
+- **Single Responsibility Principle (SRP):** Cada clase tiene una única responsabilidad (ej. `ServicioReservas` gestiona la lógica, `ReservaBuilder` solo construye el objeto).
+- **Open/Closed Principle (OCP):** Se pueden agregar nuevos canales de notificación o nuevas estrategias de cancelación sin modificar las clases existentes.
+- **Dependency Inversion Principle (DIP):** Las clases de alto nivel dependen de abstracciones (interfaces como `Notificador`, `ReservaObserver`, `EstrategiaCancelacion`) y no de implementaciones concretas.
+
+---
+
+## 6. Tecnologías Utilizadas
 
 - **Lenguaje:** Java 17
 - **Gestor de Dependencias:** Apache Maven 3.9+
@@ -12,28 +48,15 @@ Este proyecto integra y consolida la arquitectura orientada a objetos para el si
 
 ---
 
-## Decisiones Principales de Diseño
+## 7. Cómo Compilar y Ejecutar
 
-### 1. Modelo de Dominio Base (Ae1)
+1. **Compilar el proyecto:**
+    ```bash
+    mvn clean compile
+    mvn exec:java -Dexec.mainClass="edu.uees.tutorias.Main"
+    ```
 
-- **`Usuario` (Clase Base):** Encapsula atributos comunes (`id`, `nombre`, `email`, `cedula`) mediante herencia para `Estudiante` y `Docente`.
-- **`Estudiante` / `Docente`:** Especializan a `Usuario` para representar a los actores clave de las tutorías.
-- **`Materia` & `HorarioTutoria`:** Definen la asignatura académica, las ventanas de atención y la gestión de cupos libres.
-- **`Reserva`:** Entidad central del sistema que coordina la relación entre estudiante, docente, materia y horario.
-- **`ComprobanteAsistencia`:** Genera la evidencia documental tras realizar la sesión.
-
-### 2. Patrones de Diseño Implementados (Ae2 + Ae3)
-
-| Patrón             | Paquete             | Propósito y Solución                                                                                                                                                                           |
-| :----------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Builder**        | `patrones.builder`  | Permite la construcción paso a paso de objetos `Reserva` mediante Fluent API, separando parámetros requeridos de opcionales (modalidad, grabación, prioridad, etc.).                           |
-| **Factory Method** | `patrones.factory`  | Desacopla la creación de notificadores (Email, SMS, Teams, WhatsApp) eliminando la necesidad de estructuras condicionales `if-else` o `switch`.                                                |
-| **Observer**       | `patrones.observer` | Notifica automáticamente a los observadores registrados (`EmailReservaObserver`, `LogReservaObserver`) ante cambios de estado en la `Reserva` (`CONFIRMADA`, `CANCELADA`).                     |
-| **Strategy**       | `patrones.strategy` | Evalúa dinámicamente las políticas de cancelación de tutorías (`CancelacionEstandarStrategy` vs `CancelacionPrioritariaStrategy`), independizando las reglas de negocio del dominio principal. |
-
----
-
-## Estructura del Repositorio
+## Estructura del Proyecto
 
 ```text
 sistema-tutorias/
@@ -87,3 +110,8 @@ sistema-tutorias/
 └── pom.xml
 
 ```
+
+## Estructura del Proyecto
+
+**Declaración de Uso de IA**
+Se utilizó asistencia de inteligencia artificial como herramienta de soporte para estructuración de diagramas PlantUML y soporte en la redacción de la documentación. La lógica de negocio y las decisiones arquitectónicas fueron validadas y adaptadas manualmente según los requerimientos académicos.
