@@ -12,4 +12,11 @@ public class Docente extends Usuario {
 
     public void publicarHorario() { }
     public void registrarAsistencia() { }
+    public String getFacultad() {
+        return facultad;
+    }
+
+    public String getEspecialidad() {
+        return especialidad;
+    }
 }

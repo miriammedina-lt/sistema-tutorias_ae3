@@ -16,4 +16,9 @@ public class ComprobanteAsistencia {
     }
 
     public void completarRegistro() { }
+    // --- GETTERS ---
+    public String getId() { return id; }
+    public LocalDateTime getFechaRealizacion() { return fechaRealizacion; }
+    public String getObservaciones() { return observaciones; }
+    public boolean isAsistio() { return asistio; }
 }

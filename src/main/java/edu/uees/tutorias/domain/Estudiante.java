@@ -14,4 +14,9 @@ public class Estudiante extends Usuario {
 
     public void solicitarTutoria() { }
     public void cancelarReserva() { }
+
+    // Getters
+    public String getCarrera() { return carrera; }
+    public int getSemestre() { return semestre; }
+    public String getMatricula() { return matricula; }
 }

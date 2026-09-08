@@ -33,4 +33,11 @@ public class HorarioTutoria {
     public boolean estaDisponible() {
         return this.cupoLibre > 0;
     }
+
+    // --- GETTERS AÑADIDOS ---
+    public String getId() { return id; }
+    public LocalDate getFecha() { return fecha; }
+    public LocalTime getHoraInicio() { return horaInicio; }
+    public LocalTime getHoraFin() { return horaFin; }
+    public int getCupoLibre() { return cupoLibre; }
 }
