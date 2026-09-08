@@ -11,6 +11,19 @@ public class Materia {
         this.creditos = creditos;
     }
 
+    // --- AGREGAR GETTERS ---
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getCreditos() {
+        return creditos;
+    }
+
     public boolean esImpartidaPor(Docente docente) {
         return true;
     }

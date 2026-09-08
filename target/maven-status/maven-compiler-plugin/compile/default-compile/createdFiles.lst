@@ -13,7 +13,6 @@ edu\uees\tutorias\domain\Docente.class
 edu\uees\tutorias\service\ServicioReservas.class
 edu\uees\tutorias\Main.class
 edu\uees\tutorias\patrones\factory\NotificacionEmail.class
-edu\uees\tutorias\patrones\builder\Reserva.class
 edu\uees\tutorias\patrones\factory\NotificacionTeams.class
 edu\uees\tutorias\patrones\factory\NotificacionWhatsApp.class
 edu\uees\tutorias\domain\Estudiante.class

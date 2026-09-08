@@ -1,18 +1,25 @@
 package edu.uees.tutorias.patrones.builder;
 
+import edu.uees.tutorias.domain.Docente;
+import edu.uees.tutorias.domain.Estudiante;
+import edu.uees.tutorias.domain.HorarioTutoria;
+import edu.uees.tutorias.domain.Materia;
+import edu.uees.tutorias.domain.Reserva;
+
 public class ReservaBuilder {
-    protected final String estudiante;
-    protected final String docente;
-    protected final String materia;
-    protected final String horario;
+    private String id;
+    private Estudiante estudiante;
+    private Docente docente;
+    private Materia materia;
+    private HorarioTutoria horario;
+    private String modalidad = "Presencial";
+    private int duracionMinutos = 60;
+    private boolean requiereGrabacion = false;
+    private String observaciones = "Sin observaciones";
+    private String prioridad = "Normal";
 
-    protected String modalidad = "Presencial";
-    protected int duracionMinutos = 60;
-    protected boolean requiereGrabacion = false;
-    protected String observaciones = "Sin observaciones";
-    protected String prioridad = "Normal"; // Valor por defecto
-
-    public ReservaBuilder(String estudiante, String docente, String materia, String horario) {
+    public ReservaBuilder(String id, Estudiante estudiante, Docente docente, Materia materia, HorarioTutoria horario) {
+        this.id = id;
         this.estudiante = estudiante;
         this.docente = docente;
         this.materia = materia;
@@ -24,13 +31,13 @@ public class ReservaBuilder {
         return this;
     }
 
-    public ReservaBuilder duracionMinutos(int duracionMinutos) {
-        this.duracionMinutos = duracionMinutos;
+    public ReservaBuilder duracionMinutos(int duracion) {
+        this.duracionMinutos = duracion;
         return this;
     }
 
-    public ReservaBuilder requiereGrabacion(boolean requiereGrabacion) {
-        this.requiereGrabacion = requiereGrabacion;
+    public ReservaBuilder requiereGrabacion(boolean requiere) {
+        this.requiereGrabacion = requiere;
         return this;
     }
 
@@ -54,4 +61,16 @@ public class ReservaBuilder {
         }
         return new Reserva(this);
     }
+
+    // Getters utilizados por el constructor de Reserva
+    public String getId() { return id; }
+    public Estudiante getEstudiante() { return estudiante; }
+    public Docente getDocente() { return docente; }
+    public Materia getMateria() { return materia; }
+    public HorarioTutoria getHorario() { return horario; }
+    public String getModalidad() { return modalidad; }
+    public int getDuracionMinutos() { return duracionMinutos; }
+    public boolean isRequiereGrabacion() { return requiereGrabacion; }
+    public String getObservaciones() { return observaciones; }
+    public String getPrioridad() { return prioridad; }
 }
