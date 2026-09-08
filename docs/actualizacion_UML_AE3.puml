@@ -1,0 +1,187 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "edu.uees.gestion_tutorias" {
+
+  ' --- DOMINIO BASE ---
+  abstract class Usuario {
+    - id: String
+    - nombre: String
+    - email: String
+    - cedula: String
+    + validarEmail(): boolean
+    + autenticar(): boolean
+  }
+
+  class Estudiante {
+    - carrera: String
+    - semestre: int
+    - matricula: String
+    + solicitarTutoria(): void
+    + cancelarReserva(): void
+  }
+
+  class Docente {
+    - facultad: String
+    - especialidad: String
+    + publicarHorario(): void
+    + registrarAsistencia(): void
+  }
+
+  class Materia {
+    - codigo: String
+    - nombre: String
+    - creditos: int
+    + esImpartidaPor(): boolean
+  }
+
+  class HorarioTutoria {
+    - id: String
+    - fecha: LocalDate
+    - horaInicio: LocalTime
+    - horaFin: LocalTime
+    - cupoLibre: int
+    + reservarCupo(): boolean
+    + liberarCupo(): void
+    + estaDisponible(): boolean
+  }
+
+  class ComprobanteAsistencia {
+    - id: String
+    - fechaRealizacion: LocalDateTime
+    - observaciones: String
+    - asistio: boolean
+    + completarRegistro(): void
+  }
+
+  ' --- PATRÓN BUILDER (Ae2) ---
+  class Reserva {
+    - id: String
+    - fechaSolicitud: LocalDateTime
+    - estado: String
+    - motivo: String
+    - modalidad: String
+    - duracionMinutos: int
+    - prioridad: String
+    - observadores: List<ReservaObserver>
+    + Reserva(builder: ReservaBuilder)
+    + agregarObservador(obs: ReservaObserver): void
+    + cambiarEstado(nuevoEstado: String): void
+    + solicitarCancelacion(horasAnticipacion: int, estrategia: EstrategiaCancelacion): boolean
+  }
+
+  class ReservaBuilder {
+    - estudiante: String
+    - docente: String
+    - materia: String
+    - horario: String
+    - modalidad: String
+    - duracionMinutos: int
+    - prioridad: String
+    + ReservaBuilder(estudiante: String, docente: String, materia: String, horario: String)
+    + modalidad(m: String): ReservaBuilder
+    + duracionMinutos(min: int): ReservaBuilder
+    + prioridad(p: String): ReservaBuilder
+    + build(): Reserva
+  }
+
+  ' --- PATRÓN FACTORY METHOD (Ae2 - 4 Canales Completo) ---
+  interface Notificacion {
+    + enviar(destino: String, mensaje: String): void
+  }
+
+  class NotificacionEmail implements Notificacion {
+    + enviar(destino: String, mensaje: String): void
+  }
+
+  class NotificacionSMS implements Notificacion {
+    + enviar(destino: String, mensaje: String): void
+  }
+
+  class NotificacionTeams implements Notificacion {
+    + enviar(destino: String, mensaje: String): void
+  }
+
+  class NotificacionWhatsApp implements Notificacion {
+    + enviar(destino: String, mensaje: String): void
+  }
+
+  abstract class NotificadorFactory {
+    + {abstract} crearNotificacion(): Notificacion
+    + enviarMensaje(destino: String, mensaje: String): void
+  }
+
+  class EmailNotificadorFactory extends NotificadorFactory {
+    + crearNotificacion(): Notificacion
+  }
+
+  class SMSNotificadorFactory extends NotificadorFactory {
+    + crearNotificacion(): Notificacion
+  }
+
+  class TeamsNotificadorFactory extends NotificadorFactory {
+    + crearNotificacion(): Notificacion
+  }
+
+  class WhatsAppNotificadorFactory extends NotificadorFactory {
+    + crearNotificacion(): Notificacion
+  }
+
+  ' --- PATRÓN OBSERVER (Ae3) ---
+  interface ReservaObserver {
+    + enCambioEstado(idReserva: String, nuevoEstado: String): void
+  }
+
+  class LogReservaObserver implements ReservaObserver {
+    + enCambioEstado(idReserva: String, nuevoEstado: String): void
+  }
+
+  class EmailReservaObserver implements ReservaObserver {
+    + enCambioEstado(idReserva: String, nuevoEstado: String): void
+  }
+
+  ' --- PATRÓN STRATEGY (Ae3) ---
+  interface EstrategiaCancelacion {
+    + puedeCancelar(horasAnticipacion: int): boolean
+  }
+
+  class CancelacionEstandarStrategy implements EstrategiaCancelacion {
+    + puedeCancelar(horasAnticipacion: int): boolean
+  }
+
+  class CancelacionPrioritariaStrategy implements EstrategiaCancelacion {
+    + puedeCancelar(horasAnticipacion: int): boolean
+  }
+
+  ' --- CLASE COORDINADORA ---
+  class ServicioReservas {
+    - repositorio: RepositorioReservas
+    - notificadorFactory: NotificadorFactory
+    + crearReserva(builder: ReservaBuilder): Reserva
+    + cancelarReserva(reserva: Reserva, horas: int, estrategia: EstrategiaCancelacion): boolean
+  }
+
+  interface RepositorioReservas {
+    + guardar(reserva: Reserva): void
+    + buscarPorId(id: String): Reserva
+  }
+
+  ' --- RELACIONES ---
+  Usuario <|-- Estudiante
+  Usuario <|-- Docente
+  Docente "1" -- "*" HorarioTutoria : publica >
+  Docente "1" -- "*" Materia : dicta >
+  Estudiante "1" -- "*" Reserva : realiza >
+  Reserva "*" -- "1" HorarioTutoria : asignado_a >
+  Reserva "1" -- "0..1" ComprobanteAsistencia : genera >
+  
+  ReservaBuilder ..> Reserva : construye >
+  NotificadorFactory ..> Notificacion : crea >
+  
+  Reserva "1" o-- "*" ReservaObserver : notifica >
+  ServicioReservas ..> EstrategiaCancelacion : usa >
+  ServicioReservas --> RepositorioReservas
+  ServicioReservas --> NotificadorFactory
+
+}
+@enduml
