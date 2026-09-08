@@ -1,8 +1,11 @@
 package edu.uees.tutorias.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.uees.tutorias.patrones.builder.ReservaBuilder;
+import edu.uees.tutorias.patrones.observer.ReservaObserver;
 
 public class Reserva {
     private String id;
@@ -20,6 +23,9 @@ public class Reserva {
     private final String observaciones;
     private final String prioridad;
 
+    // --- LISTA DE OBSERVADORES (Ae3) ---
+    private final List<ReservaObserver> observadores = new ArrayList<>();
+
     public Reserva(ReservaBuilder builder) {
         this.id = builder.getId();
         this.fechaSolicitud = LocalDateTime.now();
@@ -36,22 +42,44 @@ public class Reserva {
         this.prioridad = builder.getPrioridad();
     }
 
+    // --- METODOS DEL PATRON OBSERVER ---
+    public void agregarObservador(ReservaObserver obs) {
+        this.observadores.add(obs);
+    }
+
+    public void eliminarObservador(ReservaObserver obs) {
+        this.observadores.remove(obs);
+    }
+
+    private void notificarObservadores() {
+        for (ReservaObserver obs : observadores) {
+            obs.notificar(this.id, this.estado);
+        }
+    }
+
+    // --- METODOS AE1 ACTUALIZADOS ---
     public void confirmar() {
         this.estado = "CONFIRMADA";
+        notificarObservadores(); 
     }
 
     public void cancelar() {
         if (!"COMPLETADA".equals(this.estado)) {
             this.estado = "CANCELADA";
+            notificarObservadores(); 
         }
     }
 
     public void reprogramar() { }
 
+    // --- Getters y Setters ---
     public String getId() { return id; }
     public LocalDateTime getFechaSolicitud() { return fechaSolicitud; }
     public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setEstado(String estado) { 
+        this.estado = estado; 
+        notificarObservadores();
+    }
     public String getMotivo() { return motivo; }
     public Estudiante getEstudiante() { return estudiante; }
     public Docente getDocente() { return docente; }
@@ -62,16 +90,4 @@ public class Reserva {
     public boolean isRequiereGrabacion() { return requiereGrabacion; }
     public String getObservaciones() { return observaciones; }
     public String getPrioridad() { return prioridad; }
-
-    @Override
-    public String toString() {
-        return "Reserva{" +
-                "id='" + id + '\'' +
-                ", estado='" + estado + '\'' +
-                ", estudiante=" + (estudiante != null ? estudiante.getNombre() : "N/A") +
-                ", docente=" + (docente != null ? docente.getNombre() : "N/A") +
-                ", materia=" + (materia != null ? materia.getNombre() : "N/A") +
-                ", modalidad='" + modalidad + '\'' +
-                '}';
-    }
 }
