@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.uees.tutorias.patrones.builder.ReservaBuilder;
 import edu.uees.tutorias.patrones.observer.ReservaObserver;
+import edu.uees.tutorias.patrones.strategy.EstrategiaCancelacion;
 
 public class Reserva {
     private String id;
@@ -57,6 +58,20 @@ public class Reserva {
         }
     }
 
+    // --- METODO DEL PATRON STRATEGY ---
+    public boolean cancelarConEstrategia(int horasAnticipacion, EstrategiaCancelacion estrategia) {
+        if (estrategia.puedeCancelar(horasAnticipacion)) {
+            this.estado = "CANCELADA";
+            System.out.println("[STRATEGY] Cancelación aprobada según la regla aplicada.");
+            notificarObservadores(); // Dispara Observer si se canceló exitosamente
+            return true;
+        } else {
+            System.out.println("[STRATEGY] Cancelación RECHAZADA. No cumple el tiempo de anticipación.");
+            return false;
+        }
+    }
+
+
     // --- METODOS AE1 ACTUALIZADOS ---
     public void confirmar() {
         this.estado = "CONFIRMADA";
@@ -70,7 +85,7 @@ public class Reserva {
         }
     }
 
-    public void reprogramar() { }
+    //public void reprogramar() { }
 
     // --- Getters y Setters ---
     public String getId() { return id; }
