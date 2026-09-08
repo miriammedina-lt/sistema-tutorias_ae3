@@ -111,7 +111,6 @@ sistema-tutorias/
 
 ```
 
-## Estructura del Proyecto
+## Declaración de Uso de IA
 
-**Declaración de Uso de IA**
 Se utilizó asistencia de inteligencia artificial como herramienta de soporte para estructuración de diagramas PlantUML y soporte en la redacción de la documentación. La lógica de negocio y las decisiones arquitectónicas fueron validadas y adaptadas manualmente según los requerimientos académicos.
