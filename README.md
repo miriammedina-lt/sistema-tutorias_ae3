@@ -4,6 +4,14 @@ Este proyecto integra y consolida la arquitectura orientada a objetos para el si
 
 ---
 
+## Tecnologías Utilizadas
+
+- **Lenguaje:** Java 17
+- **Gestor de Dependencias:** Apache Maven 3.9+
+- **Modelado UML:** PlantUML
+
+---
+
 ## Decisiones Principales de Diseño
 
 ### 1. Modelo de Dominio Base (Ae1)
